@@ -1,0 +1,15 @@
+System design is hard, and writing a precise specificaiton is even
+harder. OpenTelemetry is a large, cross-language project, with APIs in
+over nine languages. Come learn what worked for us, and what didn't.
+
+Shared understanding is difficult to achieve when it is built on
+imprecise language (english) or conflicting terminology taken from
+past designs and systems. Too much process dampens interest, too
+little creates risk. What are effective ways to confront these issues?
+
+Over the past year, we've come together as a community, and developed
+a specification process which allows us to mobilize many teams to work
+in parallel. Even if you aren't creating a huge new OSS project, the
+tools and processes described in this talk can be adapted to improve
+system design, and make collaboration fruitful across your
+organization.

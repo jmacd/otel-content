@@ -1,0 +1,8 @@
+Josh MacDonald is a Software Engineer at LightStep and a member of the
+OpenTelemetry technical committee.
+
+Josh has been working on observability systems for the last 15 years,
+having worked on monitoring, logging, tracing, and metrics systems as
+well as logging and tracing APIs at Google.  Previously, he created
+Xdelta, an open-source compression tool.  Currently, he is focused on
+sampling algorithms and data engineering at LightStep.

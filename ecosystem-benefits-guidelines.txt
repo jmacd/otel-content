@@ -1,0 +1,25 @@
+This talk will cover several observations that helped us organize a
+large community to create a complex new specification with many
+stakeholders.
+
+Early in the OpenTelemetry project we discovered something
+philosophers of science have known for a while: the problem of
+"incommensurability".  We were literally talking past each other
+because half of the community came from OpenTracing and the other half
+from OpenCensus.  Our words did not mean the same things, the
+requirements of each side were could not be understood by the other.
+We found that code examples and prototypes conveyed meaning more
+effectively, until a shared understanding emerged.
+
+As the project gained contributors, we had to decentralize control
+over the various parts and grant maintainership to a select number of
+individuals tasked with growing a community in each language.  Despite
+adding approvers as each community grew, dedicated roles for triage of
+issues and PRs were needed.  To keep the project moving forward,
+several dedicated project managers were assigned to keep us on track.
+
+Github issues and PR discussions proved an ineffective way to discuss
+large, complex changes or additions to the specification.  We
+developed an RFC process for proposing and approving such changes, so
+they could be reviewed in small units before they were written into
+the specification..

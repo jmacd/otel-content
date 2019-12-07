@@ -1,0 +1,26 @@
+This talk will introduce the new library and cover two significant
+challenges that were overcome, with lessons for API design and
+specification writing.
+
+Existing metrics APIs are typically described in behavioral terms, not
+semantic terms, where API documentation explains the outcome, not the
+meaning of each operation.  Consolidating the API required finding
+semantic definitions and terminology that easily conveyed meaning to
+the developer.  The new API departs significantly from existing
+libraries in offering only three semantic kinds of instrument.
+
+Developing an API that does not make assumptions about the downstream
+system and does not sacrifice performance compared with existing
+libraries also proved challenging.  Prometheus and Statsd represent
+two extremes in this regard.  Combining the best of these extremes
+required introducing re-usable "label sets" and offering multiple
+calling conventions.
+
+The talk will cover the design of the default OpenTelemetry metrics
+SDK and how an "export pipeline" can be configured with various
+degrees of cost and precision for various downstream systems.  This
+talk will demonstrate one of the primary arguments for the
+OpenTelemetry project, that bringing observability APIs into a
+framework makes them more than the sum of their parts.  Attendees
+should come away from this talk imagining new ways to combine tracing
+and metrics data in an observability system.

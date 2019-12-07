@@ -1,0 +1,5 @@
+Metrics have a problem: the higher the precision, the higher the cost. But while developers are the ones choosing a metrics library, cost and precision are operator concerns.  We need a decoupled metrics API.
+
+The OpenTelemetry Metrics API solves this problem in a novel way. By separating concerns, we avoid limiting the potential for optimizations and resource trade-offs by deferring critical decisions until program execution.  Developers can instrument their code without cost concerns, and system operators can select and configure the metrics implementation that is best suited to their needs.
+
+Decoupling the API from the implementation is just the beginning. We'll also look at the potential for combined metrics and tracing implementations--aggregating metrics by trace, sampling traces based on metrics outliers, and more with OpenTelemetry APIs.
