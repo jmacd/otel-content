@@ -1,0 +1,37 @@
+Proposal: Span Context == Span
+
+This proposal stands as a counterpoint to #68.  Both of these proposals are aimed at clarifying what it means to have a "Span object" after OTEP #66 is accepted.
+
+The "Span object" concept does not really exist in the API as it is specified today, although the language could be improved.  This proposal states that all we should improve is the specification language for the "Span interface".
+
+The two reasons given in #68:
+
+> When Context API is moved into an independent layer below all other layers, the way extractors might work is like this: ctx = extractor.extract(ctx, request). Because extract() cannot start a new span, it must store span context in the returned ctx. With this proposal, it will always keep the span context only in the context, never the Span.
+
+Extract is defined as returning a context.  Extract's job is not to start a span, but the language here is correct.  Spans are not **created**, they are **started**.  Creating a span implies there is a new object.  Starting a span implies there is an event.  If an SDK decides to keep some sort of span-like object in the context, it may do so, but it would be the result of `StartSpan`, not `Extract`.  The job of specifying this API is not to dictate how the SDK works; there has never been a requirement that spans be implemented as objects. The early "Streaming" SDK developed in the Go repo demonstrates this, [here `span` is essentially just a context with the addition of a process-wide sequence number to order span events](https://github.com/open-telemetry/opentelemetry-go/blob/4172bdfbf9def7962191c955228b7f9e4561466c/experimental/streaming/sdk/span.go#L29).
+
+> Not giving users references to Span objects simplifies memory management. In OpenTracing it was pretty difficult to pool span objects because user can keep a reference to the span even after calling span.finish(). The tracer can keep a buffer of active spans indexed by immutable span contexts that are kept by the user code. When span is finished the tracer can reuse the span object for another trace. if a later call from user code comes with span context not in the table, trace can either ignore the call, or capture that data by other means (if the backend supports merging of spans).
+
+The semantics of the OpenTelemetry API already permit an SDK to simplify memory management as this implies, as demonstrated in the Go streaming SDK (link above).  
+
+I would like to revise the specification language to make it very clear that the `Span` returned by `StartSpan()` is an **interface** value that is logically equivalent to the span context.  Operations on `Span` values semantically report events, associated with that span context, that the SDK will implement accordingly.  An operation like `CurrentSpan()` is logically just `Span{CurrentContext()}`.
+
+The specification will have to be adjusted to clarify this matter.  We should stop describing starting a span as "Creation".  Most of the specification already refers to "Span interface", but the leading defintion is incorrect:
+
+> `Span` is a mutable object storing information about the current operation execution.
+
+This is just not true.  We've decoupled the API from the SDK and there is certainly not a requirement that the `Span` be mutable or an object.  `Span` is better described as a "span context reference", and that operations on `Span` interfaces create "span events".
+
+After this revision to the specification language, I believe all of @yurishkuro's concerns will actually be addressed, and there is no need to change any existing APIs.
+
+## Detail: Finishing a span
+
+This may raise some questions, for example, what does it mean to "Finish" a Span?
+
+Finishing a span is just another Span event.  What if the span was already finished?  Then the SDK will have to deal with a duplicate span Finish event.
+
+If the SDK maintains a span-like object in the Context as an optimization (although it risks memory management issues), perhaps it will recognize immediately that the subsequent Finish event was a duplicate--it can record an warning, but this is not a bug (it could be a race condition).
+
+If the SDK does not maintain a span-like object in the Context, as in the streaming SDK discussed above, then it may actually not have any record of the span anywhere.  This will happen naturally if the user forgets to finish spans and the SDK decides to purge unfinished spans from memory.  This is not a bug, this is a duplicate Finish.
+
+What happens to the context after the Span is finished?  The context is unchanged, so it's possible for the user to continue operating after the span is finished.  This is again, not a bug, and some SDKs will be able incorporate these events.  For example in a stateless SDK the process itself will not know whether the Span was already finished, it will simply record an event for the downstream system to parse.  The downstream system in this case may record a warning, but I wouldn't call this a bug.  As discussed in comments for #66, this makes it semantically meaningful to record span events both before a span is created and after it is finished.  In an SDK specification, I would say that SDKs are not required to handle such events, but they are still semantically meaningful.
